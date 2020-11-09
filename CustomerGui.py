@@ -35,27 +35,28 @@ def customerdetection(*args):
         
         while True:
             (ret,img)=webcam.read()
-            Registration.put_text(img, 'Press Q to quit', 50, 220)
-            gray_img=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY) 
-            facesFound= Registration.face_cascade.detectMultiScale(gray_img,1.32,3)
-            for (x,y,w,h) in facesFound:
-                cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2) 
-                faceFound=gray_img[y:y+h,x:x+w]
-                face_resized=cv2.resize(faceFound,(int(width),int(height)))
-                label,confidence= face_recognizer_model.predict(face_resized)
-                Registration.draw_rect(img, (x,y,w,h))
-                predicted_name = names[label]
-                if confidence<70:
-                    Registration.put_text(img, predicted_name+str(confidence), x, y)
-                    Registration.CustomerWelcome(predicted_name)
-                else:
-                    Registration.put_text(img,"Unregistred Customer", x, y)
-            cv2.namedWindow("Detection", cv2.WINDOW_NORMAL)
-            cv2.moveWindow("Detection", 650, 150)
-            cv2.resizeWindow('Detection', 640,420)
-            cv2.imshow('Detection',img)
-            if cv2.waitKey(1) & 0xFF == ord("q") :
-                break
+            if ret:
+                Registration.put_text(img, 'Press Q to quit', 50, 220)
+                gray_img=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+                facesFound= Registration.face_cascade.detectMultiScale(gray_img,1.32,3)
+                for (x,y,w,h) in facesFound:
+                    cv2.rectangle(img,(x,y),(x+w,y+h),(255,0,0),2)
+                    faceFound=gray_img[y:y+h,x:x+w]
+                    face_resized=cv2.resize(faceFound,(int(width),int(height)))
+                    label,confidence= face_recognizer_model.predict(face_resized)
+                    Registration.draw_rect(img, (x,y,w,h))
+                    predicted_name = names[label]
+                    if confidence<70:
+                        Registration.put_text(img, predicted_name+str(confidence), x, y)
+                        Registration.CustomerWelcome(predicted_name)
+                    else:
+                        Registration.put_text(img,"Unregistred Customer", x, y)
+                cv2.namedWindow("Detection", cv2.WINDOW_NORMAL)
+                cv2.moveWindow("Detection", 650, 150)
+                cv2.resizeWindow('Detection', 640,420)
+                cv2.imshow('Detection',img)
+                if cv2.waitKey(1) & 0xFF == ord("q") :
+                    break
 
         webcam.release()
         cv2.destroyAllWindows()
